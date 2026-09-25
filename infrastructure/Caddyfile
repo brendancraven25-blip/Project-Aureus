@@ -1,0 +1,45 @@
+# Global Options
+{
+    # Internal TLS for local-only domains — avoids Let's Encrypt errors
+    # on a home network. Requires trusting Caddy's root CA on your devices.
+    local_certs
+}
+
+# The Media Ecosystem
+https://jellyfin.lan {
+    reverse_proxy jellyfin:8096
+}
+
+https://requests.lan {
+    reverse_proxy jellyseerr:5055
+}
+
+https://stats.lan {
+    reverse_proxy jellystat:3000
+}
+
+# The Arr Stack
+https://sonarr.lan {
+    reverse_proxy sonarr:8989
+}
+
+https://radarr.lan {
+    reverse_proxy radarr:7878
+}
+
+https://prowlarr.lan {
+    reverse_proxy prowlarr:9696
+}
+
+https://qbit.lan {
+    reverse_proxy qbittorrent:8080
+}
+
+# Server Infrastructure
+https://home.lan {
+    reverse_proxy homepage:3000
+}
+
+https://status.lan {
+    reverse_proxy uptime-kuma:3001
+}

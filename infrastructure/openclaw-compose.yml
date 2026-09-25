@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  openclaw:
+    container_name: openclaw
+    image: openclaw:local # Assumes a locally built image from source
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./openclaw_data:/app/data
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/snd:/dev/snd
+    restart: unless-stopped

@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - ./jellyfin/config:/config
+      - /path/to/your/movies:/data/movies
+      - /path/to/your/tvshows:/data/tvshows
+    ports:
+      - 8096:8096
+    devices:
+      - /dev/dri:/dev/dri
+    networks:
+      - media_net
+    restart: unless-stopped
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=info
+      - TZ=America/Chicago
+    ports:
+      - 5055:5055
+    volumes:
+      - ./jellyseerr/config:/app/config
+    networks:
+      - media_net
+    restart: unless-stopped
+
+  jellystat-db:
+    image: postgres:15
+    container_name: jellystat-db
+    environment:
+      - POSTGRES_USER=jellystat
+      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_DB=jellystat
+    volumes:
+      - ./jellystat/postgres-data:/var/lib/postgresql/data
+    networks:
+      - media_net
+    restart: unless-stopped
+
+  jellystat:
+    image: cyb3rjak3/jellystat:latest
+    container_name: jellystat
+    environment:
+      - TZ=America/Chicago
+      - POSTGRES_USER=jellystat
+      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_IP=jellystat-db
+      - POSTGRES_PORT=5432
+      - JWT_SECRET=generate_a_real_random_string_here
+    ports:
+      - 3000:3000
+    volumes:
+      - ./jellystat/data:/app/backend/data
+    networks:
+      - media_net
+    depends_on:
+      - jellystat-db
+    restart: unless-stopped
+
+networks:
+  media_net:
+    external: true
